@@ -6,6 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <stdexcept>
+#include <algorithm>
 
 extern LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -210,32 +211,50 @@ void Render::setup_matrices()
 	std::vector<cv::Rect> faces = master().subsystem<Detector>().faces();
     if (!faces.empty())
     {
-		size_t big = 0;
-		for (size_t i = 0; i < faces.size(); ++i)
-		{
-			if (faces[i].width * faces[i].height > faces[big].width * faces[big].height)
-			{
-				big = i;
-			}
-		}
+        static cv::Rect prev_face; // face interpolation
 
-		cv::Rect &face = faces[big];
+        struct SquareCompare
+        {
+            bool operator ()(const cv::Rect &a, const cv::Rect &b)
+            {
+                return a.width * a.height < b.width * b.height;
+            }
+        };
+        cv::Rect &f = *std::max_element(faces.begin(), faces.end(), SquareCompare());
+
+        f.x = (f.x + prev_face.x) / 2;
+        f.y = (f.y + prev_face.y) / 2;
+        f.width = (f.width + prev_face.width) / 2;
+        f.height = (f.height + prev_face.height) / 2;
+
+        prev_face = f;
+
+        float z_scale = 0.2f;
 
         float scale = 0.033f; 
         int x_center = _width / 2;
         int y_center = _height / 2;
 
         D3DXMATRIXA16 matWorld;
-        D3DXMatrixTranslation(&matWorld, ((face.x + face.width / 2) - x_center) * scale, (y_center - (face.y + face.height / 2)) * scale, 0.0f);
+        D3DXMatrixTranslation(&matWorld, ((f.x + f.width / 2) - x_center) * scale, (y_center - (f.y + f.height / 2)) * scale, 0.f);
         _pd3dDevice()->SetTransform(D3DTS_WORLD, &matWorld);
-    }
 
-    D3DXVECTOR3 vEyePt(0.0f, 10.0f, -24.0f);
-    D3DXVECTOR3 vLookatPt(0.0f, 3.0f, 0.0f);
-    D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
-    D3DXMATRIXA16 matView;
-    D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
-    _pd3dDevice()->SetTransform(D3DTS_VIEW, &matView);
+        D3DXVECTOR3 vEyePt(0.0f, 10.0f, -24.0f + (f.width - 160.f) * z_scale);
+        D3DXVECTOR3 vLookatPt(0.0f, 3.0f, 0.0f);
+        D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
+        D3DXMATRIXA16 matView;
+        D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
+        _pd3dDevice()->SetTransform(D3DTS_VIEW, &matView);
+    }
+    else
+    {
+        D3DXVECTOR3 vEyePt(0.0f, 10.0f, -24.0f);
+        D3DXVECTOR3 vLookatPt(0.0f, 3.0f, 0.0f);
+        D3DXVECTOR3 vUpVec(0.0f, 1.0f, 0.0f);
+        D3DXMATRIXA16 matView;
+        D3DXMatrixLookAtLH(&matView, &vEyePt, &vLookatPt, &vUpVec);
+        _pd3dDevice()->SetTransform(D3DTS_VIEW, &matView);
+    }
 
     D3DXMATRIXA16 matProj;
     D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 100.0f);
