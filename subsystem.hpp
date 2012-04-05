@@ -10,6 +10,9 @@ class Subsystem : boost::noncopyable
 public:
     Master & master();
 
+    virtual void start() {}
+    virtual void stop() {}
+
     virtual ~Subsystem() = 0;
 
 protected:

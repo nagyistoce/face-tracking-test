@@ -13,16 +13,26 @@ Detector::Detector(Master *master)
 	{ 
         throw std::runtime_error("Unable to load face template"); 
 	}
+}
 
+void Detector::start()
+{
     _detect_thr = boost::thread(&Detector::detect_thread, this);
+}
+
+void Detector::stop()
+{
+    _detect_thr.interrupt();
 }
 
 Detector::~Detector()
 {
     try
     {
-	    _detect_thr.interrupt();
-	    _detect_thr.join();
+        if (_detect_thr.joinable())
+        {
+	        _detect_thr.join();
+        }
     }
     catch(...)
     {

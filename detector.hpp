@@ -11,6 +11,9 @@ class Detector : public Subsystem
 public:
     std::vector<cv::Rect> faces();
 
+    virtual void start();
+    virtual void stop();
+
     ~Detector();
 private:
     friend class Master;
