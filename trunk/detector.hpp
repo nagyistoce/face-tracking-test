@@ -14,7 +14,6 @@ public:
     virtual void start();
     virtual void stop();
 
-    ~Detector();
 private:
     friend class Master;
     explicit Detector(Master *master);

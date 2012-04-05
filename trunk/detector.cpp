@@ -22,15 +22,11 @@ void Detector::start()
 
 void Detector::stop()
 {
-    _detect_thr.interrupt();
-}
-
-Detector::~Detector()
-{
     try
     {
         if (_detect_thr.joinable())
         {
+            _detect_thr.interrupt();
 	        _detect_thr.join();
         }
     }
