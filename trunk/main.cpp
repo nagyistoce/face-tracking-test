@@ -33,6 +33,7 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
     catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
+		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
         PostQuitMessage(-1);
     }
 
