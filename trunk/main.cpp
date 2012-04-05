@@ -29,6 +29,8 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
         systems.add_subsystem<Capturer>();
         systems.add_subsystem<Detector>();
         systems.add_subsystem<Render>();
+
+        systems.start();
     }
     catch (std::exception &e)
     {

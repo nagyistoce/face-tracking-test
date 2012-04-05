@@ -16,6 +16,8 @@ public:
     template <typename SubsystemType>
     inline SubsystemType & subsystem();
 
+    void start();
+
     ~Master();
 
 private:
