@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Test"
 	ProjectGUID="{D3D09006-96D0-4629-88B8-122C0256058C}"
 	RootNamespace="Meshes"
@@ -234,7 +234,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;$(OPENCV_DIR)\include&quot;;&quot;$(DXSDK_DIR)\include&quot;;&quot;$(BOOST_ROOT)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WINVER=0x0501;_WIN32_WINNT=0x0501"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
 				EnableEnhancedInstructionSet="2"
@@ -242,7 +242,7 @@
 				ForceConformanceInForLoopScope="true"
 				OpenMP="false"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough="DXUT.h"
+				PrecompiledHeaderThrough=""
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
