@@ -16,7 +16,7 @@ private:
     friend class Master;
     explicit Capturer(Master *master);
 
-    CvCapture* _capture;
+    CvCapture *_capture;
     boost::mutex _guard;
 };
 
