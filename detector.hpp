@@ -1,0 +1,31 @@
+#ifndef __DETECTOR_HPP__
+# define __DETECTOR_HPP__
+
+# include "subsystem.hpp"
+
+# include <opencv2/objdetect/objdetect.hpp>
+# include <boost/thread.hpp>
+
+class Detector : public Subsystem
+{
+public:
+    std::vector<cv::Rect> faces();
+
+    ~Detector();
+private:
+    friend class Master;
+    explicit Detector(Master *master);
+
+    void detect_thread();
+
+    boost::thread _detect_thr;
+
+    cv::CascadeClassifier _face_cascade;
+    cv::CascadeClassifier _eyes_cascade;
+
+    std::vector<cv::Rect> _faces;
+    boost::mutex _guard;
+};
+
+
+#endif //__DETECTOR_HPP__
