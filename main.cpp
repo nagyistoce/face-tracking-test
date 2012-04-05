@@ -35,13 +35,14 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
         std::cout << e.what() << std::endl;
 		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
         PostQuitMessage(-1);
+	    return -1;
     }
 
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
-    while (msg.message != WM_QUIT )
+    while (msg.message != WM_QUIT)
     {
-        if( PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+        if(PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);

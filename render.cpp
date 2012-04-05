@@ -64,7 +64,7 @@ Render::Render(Master *master_)
 
     _hwnd = CreateWindow(wnd_class_name, L"Capture - Face detection",
                          WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, _width, _height,
-                         NULL, NULL, wc.hInstance, NULL);
+                         NULL, NULL, _wc.hInstance, NULL);
 
 
     if (FAILED(init_d3d()))
@@ -145,14 +145,14 @@ HRESULT Render::init_d3d()
 
 HRESULT Render::init_geometry()
 {
-    COM_ptr<ID3DXBuffer> pD3DXMtrlBuffer;
     HRESULT hr = S_OK;
+    COM_ptr<ID3DXBuffer> pD3DXMtrlBuffer;
     COM_ptr<ID3DXMesh> pMeshTemp;
 
 	DWORD NumMaterials = 0L;
-	hr = D3DXLoadMeshFromX( L"skullocc.x", D3DXMESH_SYSTEMMEM, _pd3dDevice(),
-                            NULL, &pD3DXMtrlBuffer(), NULL,
-                            &NumMaterials, &_pMesh());
+	hr = D3DXLoadMeshFromX(L"skullocc.x", D3DXMESH_SYSTEMMEM, _pd3dDevice(),
+                           NULL, &pD3DXMtrlBuffer(), NULL,
+                           &NumMaterials, &_pMesh());
     if (FAILED(hr))
 	{
 		return hr;
@@ -261,7 +261,7 @@ void Render::setup_lights()
     _pd3dDevice()->LightEnable(0, TRUE);
     _pd3dDevice()->SetRenderState(D3DRS_LIGHTING, TRUE);
 
-    _pd3dDevice()->SetRenderState( D3DRS_AMBIENT, 0x00505050 );
+    _pd3dDevice()->SetRenderState(D3DRS_AMBIENT, 0x00505050);
 }
 
 void Render::mark(cv::Mat &frame)
@@ -281,7 +281,7 @@ void Render::render_frame()
 
 	if (!frame.empty())
 	{ 
-		mark(frame); 
+		//mark(frame); 
 
         cv::Mat rgb;
 		cvtColor(frame, rgb, CV_BGR2RGB);

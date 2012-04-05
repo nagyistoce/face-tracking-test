@@ -21,7 +21,6 @@ private:
     boost::thread _detect_thr;
 
     cv::CascadeClassifier _face_cascade;
-    cv::CascadeClassifier _eyes_cascade;
 
     std::vector<cv::Rect> _faces;
     boost::mutex _guard;
