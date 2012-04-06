@@ -44,11 +44,11 @@ Render::Render(Master *master_)
     : Subsystem(master_)
 {
     cv::Mat sizing_frame;
-	while (sizing_frame.empty())
-	{
-		sizing_frame = master().subsystem<Capturer>().frame();
-		boost::this_thread::interruptible_wait(100u);
-	}
+    while (sizing_frame.empty())
+    {
+        sizing_frame = master().subsystem<Capturer>().frame();
+        boost::this_thread::interruptible_wait(100u);
+    }
 
     _width = sizing_frame.cols;
     _height = sizing_frame.rows;
@@ -71,7 +71,7 @@ Render::Render(Master *master_)
     if (FAILED(init_d3d()))
     {
         throw std::runtime_error("Unable to initialize Direct3D");
-	}
+    }
 
     if (FAILED(init_geometry()))
     {
@@ -150,17 +150,17 @@ HRESULT Render::init_geometry()
     COM_ptr<ID3DXBuffer> pD3DXMtrlBuffer;
     COM_ptr<ID3DXMesh> pMeshTemp;
 
-	DWORD NumMaterials = 0L;
-	hr = D3DXLoadMeshFromX(L"skullocc.x", D3DXMESH_SYSTEMMEM, _pd3dDevice(),
+    DWORD NumMaterials = 0L;
+    hr = D3DXLoadMeshFromX(L"skullocc.x", D3DXMESH_SYSTEMMEM, _pd3dDevice(),
                            NULL, &pD3DXMtrlBuffer(), NULL,
                            &NumMaterials, &_pMesh());
     if (FAILED(hr))
-	{
-		return hr;
-	}
+    {
+        return hr;
+    }
 
     D3DXMATERIAL *d3dxMaterials = (D3DXMATERIAL *)pD3DXMtrlBuffer()->GetBufferPointer();
-	_MeshMaterials.resize(NumMaterials);
+    _MeshMaterials.resize(NumMaterials);
     _MeshTextures.resize(NumMaterials);
 
     for (size_t i = 0; i < _MeshMaterials.size(); i++)
@@ -189,18 +189,18 @@ HRESULT Render::init_geometry()
         hr = _pMesh()->CloneMeshFVF(_pMesh()->GetOptions(), D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1,
                                     _pd3dDevice(), &pMeshTemp());
         if (FAILED(hr))
-		{
-		    return hr;
-		}
+        {
+            return hr;
+        }
 
         _pMesh = pMeshTemp;
     }
 
     // Compute normals for the mesh, if not present
     if (!bNormalsInFile)
-	{
+    {
         D3DXComputeNormals(_pMesh(), NULL);
-	}
+    }
 
     return hr;
 }
@@ -208,7 +208,7 @@ HRESULT Render::init_geometry()
 
 void Render::setup_matrices()
 {
-	std::vector<cv::Rect> faces = master().subsystem<Detector>().faces();
+    std::vector<cv::Rect> faces = master().subsystem<Detector>().faces();
     if (!faces.empty())
     {
         static cv::Rect prev_face; // face interpolation
@@ -285,51 +285,51 @@ void Render::setup_lights()
 
 void Render::mark(cv::Mat &frame)
 {
-	std::vector<cv::Rect> faces = master().subsystem<Detector>().faces();
+    std::vector<cv::Rect> faces = master().subsystem<Detector>().faces();
 
-	for (size_t i = 0; i < faces.size(); i++)
-	{
-		cv::Point center((int)(faces[i].x + faces[i].width*0.5), (int)(faces[i].y + faces[i].height*0.5));
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+        cv::Point center((int)(faces[i].x + faces[i].width*0.5), (int)(faces[i].y + faces[i].height*0.5));
         cv::ellipse(frame, center, cv::Size( (int)(faces[i].width*0.5), (int)(faces[i].height*0.5)), 0, 0, 360, cv::Scalar( 255, 0, 255 ), 4, 8, 0);
-	}
+    }
 }
 
 void Render::render_frame()
 {
     cv::Mat frame = master().subsystem<Capturer>().frame();
 
-	if (!frame.empty())
-	{ 
-		//mark(frame); 
+    if (!frame.empty())
+    { 
+        //mark(frame); 
 
         cv::Mat rgb;
-		cvtColor(frame, rgb, CV_BGR2RGB);
+        cvtColor(frame, rgb, CV_BGR2RGB);
 
-		_d3dDrawMgr()->OnResetDevice();
+        _d3dDrawMgr()->OnResetDevice();
 
-		CopyImageToTexture(rgb.data, _width, _height, _bground(), 0, 0);
-	}
+        CopyImageToTexture(rgb.data, _width, _height, _bground(), 0, 0);
+    }
 
     _pd3dDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 
     if (FAILED(_pd3dDevice()->BeginScene()))
     {
-		return;
-	}
+        return;
+    }
 
-	if (!frame.empty())
-	{ 
-		_d3dDrawMgr()->Begin(NULL);
-		D3DXVECTOR3 pos(0.f, 0.f, 1.f);
-		_d3dDrawMgr()->Draw(_bground(), NULL, NULL, &pos, 0XFFFFFFFF);
-		_d3dDrawMgr()->End();
-	}
+    if (!frame.empty())
+    { 
+        _d3dDrawMgr()->Begin(NULL);
+        D3DXVECTOR3 pos(0.f, 0.f, 1.f);
+        _d3dDrawMgr()->Draw(_bground(), NULL, NULL, &pos, 0XFFFFFFFF);
+        _d3dDrawMgr()->End();
+    }
 
     setup_lights();
 
     setup_matrices();
 
-	for(size_t i = 0; i < _MeshMaterials.size(); i++)
+    for(size_t i = 0; i < _MeshMaterials.size(); i++)
     {
         _pd3dDevice()->SetMaterial(&_MeshMaterials[i]);
         _pd3dDevice()->SetTexture(0, _MeshTextures[i]());
@@ -338,5 +338,5 @@ void Render::render_frame()
 
     _pd3dDevice()->EndScene();
 
-	_pd3dDevice()->Present(NULL, NULL, NULL, NULL);
+    _pd3dDevice()->Present(NULL, NULL, NULL, NULL);
 }

@@ -35,9 +35,9 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
     catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
-		MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
+        MessageBoxA(NULL, e.what(), "Error", MB_OK | MB_ICONERROR);
         PostQuitMessage(-1);
-	    return -1;
+        return -1;
     }
 
     MSG msg;
@@ -50,9 +50,9 @@ INT WINAPI wWinMain(HINSTANCE hInst, HINSTANCE, LPWSTR, INT)
             DispatchMessage(&msg);
         }
         else
-	    {
+        {
             systems.subsystem<Render>().render_frame();
-	    }
+        }
     }
 
     return 0;
