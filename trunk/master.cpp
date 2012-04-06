@@ -1,22 +1,23 @@
 #include "master.hpp"
+#include <boost/foreach.hpp>
 
 void Master::start()
 {
-    for (holder_type::iterator it = _subsystem_holder.begin(); it != _subsystem_holder.end(); ++it)
+	BOOST_FOREACH(holder_type::value_type &sys_ptr, _subsystem_holder)
     {
-        (*it)->start();
+        sys_ptr->start();
     }
 }
 
 Master::~Master()
 {
-    for (holder_type::iterator it = _subsystem_holder.begin(); it != _subsystem_holder.end(); ++it)
+	BOOST_FOREACH(holder_type::value_type &sys_ptr, _subsystem_holder)
     {
-        (*it)->stop();
+        sys_ptr->stop();
     }
 
-    for (holder_type::iterator it = _subsystem_holder.begin(); it != _subsystem_holder.end(); ++it)
+	BOOST_FOREACH(holder_type::value_type &sys_ptr, _subsystem_holder)
     {
-        delete *it;
+        delete sys_ptr;
     }
 }
