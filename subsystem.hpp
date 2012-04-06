@@ -18,6 +18,7 @@ public:
 protected:
     explicit Subsystem(Master *master);
 
+private:
     Master *_master;
 };
 
