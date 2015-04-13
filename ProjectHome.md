@@ -1,0 +1,1 @@
+Small application for testing opencv + direct3d in couple
